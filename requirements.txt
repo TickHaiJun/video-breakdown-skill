@@ -1,0 +1,17 @@
+# video-breakdown-skill 依赖说明
+#
+# 核心流程（preprocess.py / analyze.py / build_report.py）仅依赖
+# Python 3.9+ 标准库（json / subprocess / argparse / urllib / base64 等）
+# 以及系统已安装的 ffmpeg 与 ffprobe（基于 ffmpeg 8.x 验证）。
+# 不使用 opencv，因此默认情况下无需安装任何第三方 Python 包。
+#
+# 系统依赖（请通过系统包管理器安装，而非 pip）：
+#   ffmpeg >= 6.0 （含 ffprobe；本项目在 ffmpeg 8.1.1 上验证）
+#
+# 可选：若希望改用官方 SDK 而非内置 urllib 调用模型，可自行安装：
+# openai>=1.30.0
+#
+# 可选：moviepy / PyAV 也可用于视频处理，但本项目直接调用 ffmpeg 命令行，
+# 因此不强制安装：
+# moviepy>=1.0.3
+# av>=11.0.0

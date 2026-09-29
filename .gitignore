@@ -1,0 +1,15 @@
+# 运行产物
+breakdown_output/
+frames/
+audio.mp3
+meta.json
+analysis_result.json
+report.html
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 系统
+.DS_Store

@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>短视频爆款拆解报告</title>
+<style>
+  /* ============ 主题变量 ============ */
+  :root {
+    --bg: #f4f6f8;
+    --bg-grad: radial-gradient(1200px 600px at 80% -10%, #e3f2ee 0%, transparent 55%),
+               radial-gradient(900px 500px at -10% 10%, #e6eefc 0%, transparent 50%),
+               #f4f6f8;
+    --card: #ffffff;
+    --card-2: #f7f9fb;
+    --text: #16202b;
+    --text-soft: #51606f;
+    --text-faint: #8a97a5;
+    --border: #e4e9ee;
+    --accent: #0d9488;
+    --accent-soft: #ccfbf1;
+    --accent-2: #2563eb;
+    --accent-2-soft: #dbeafe;
+    --warn: #d97706;
+    --warn-soft: #fef3c7;
+    --shadow: 0 1px 2px rgba(20,32,43,.05), 0 10px 30px -12px rgba(20,32,43,.12);
+    --radius: 16px;
+  }
+  html[data-theme="dark"] {
+    --bg: #0b1117;
+    --bg-grad: radial-gradient(1200px 600px at 80% -10%, #0f2e2a 0%, transparent 55%),
+               radial-gradient(900px 500px at -10% 10%, #101c30 0%, transparent 50%),
+               #0b1117;
+    --card: #121b24;
+    --card-2: #0e161e;
+    --text: #e8eef4;
+    --text-soft: #a4b2c1;
+    --text-faint: #6b7a8a;
+    --border: #22303d;
+    --accent: #2dd4bf;
+    --accent-soft: #13403b;
+    --accent-2: #60a5fa;
+    --accent-2-soft: #16294a;
+    --warn: #fbbf24;
+    --warn-soft: #3a2e12;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 40px -18px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image: var(--bg-grad);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px 80px; }
+
+  /* ============ 顶部 ============ */
+  header.hero { padding: 48px 0 26px; }
+  .hero-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 999px;
+  }
+  .badge.dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  h1 { font-size: clamp(26px, 4vw, 38px); margin: 16px 0 8px; letter-spacing: -.5px; line-height: 1.25; }
+  .hero p.sub { color: var(--text-soft); margin: 0; font-size: 15px; }
+  .theme-btn {
+    border: 1px solid var(--border); background: var(--card); color: var(--text);
+    width: 42px; height: 42px; border-radius: 12px; cursor: pointer; font-size: 18px;
+    display: grid; place-items: center; transition: transform .15s, border-color .15s;
+  }
+  .theme-btn:hover { transform: translateY(-1px); border-color: var(--accent); }
+
+  /* ============ 导航 ============ */
+  nav.toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 6px; }
+  nav.toc a {
+    text-decoration: none; font-size: 13px; color: var(--text-soft);
+    padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px; background: var(--card);
+    transition: all .15s;
+  }
+  nav.toc a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ============ 卡片/章节 ============ */
+  section { margin-top: 30px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 24px;
+  }
+  .sec-head { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; }
+  .sec-num {
+    width: 30px; height: 30px; border-radius: 9px; flex: none;
+    background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center; font-weight: 700; font-size: 14px;
+  }
+  h2 { font-size: 19px; margin: 0; letter-spacing: -.2px; }
+  h3 { font-size: 15px; margin: 20px 0 10px; color: var(--text); }
+  p { margin: 8px 0; }
+  .muted { color: var(--text-soft); }
+  .small { font-size: 13px; }
+
+  /* ============ 基本信息 ============ */
+  .info-grid { display: grid; grid-template-columns: 230px 1fr; gap: 24px; }
+  .cover {
+    width: 100%; border-radius: 12px; border: 1px solid var(--border);
+    aspect-ratio: 9 / 16; object-fit: cover; background: var(--card-2);
+  }
+  .cover-fallback { display: none; }
+  .meta-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .meta-item { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .meta-item .k { font-size: 12px; color: var(--text-faint); }
+  .meta-item .v { font-size: 15px; font-weight: 600; margin-top: 2px; word-break: break-word; }
+  .topic { font-size: 16px; font-weight: 600; margin: 0 0 6px; }
+
+  /* ============ 标签 ============ */
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .tag {
+    font-size: 13px; padding: 4px 12px; border-radius: 999px;
+    background: var(--accent-2-soft); color: var(--accent-2); font-weight: 500;
+  }
+  .tag.teal { background: var(--accent-soft); color: var(--accent); }
+  .tag.ghost { background: var(--card-2); color: var(--text-soft); border: 1px solid var(--border); }
+
+  .kv { display: grid; grid-template-columns: 96px 1fr; gap: 6px 14px; font-size: 14px; margin: 8px 0; }
+  .kv .k { color: var(--text-faint); }
+
+  /* ============ 叙事时间线 ============ */
+  .timeline { position: relative; margin-top: 16px; }
+  .tl-item { display: grid; grid-template-columns: 64px 1fr; gap: 14px; padding: 0 0 18px; position: relative; }
+  .tl-item::before { content: ""; position: absolute; left: 27px; top: 22px; bottom: -2px; width: 2px; background: var(--border); }
+  .tl-item:last-child::before { display: none; }
+  .tl-time {
+    font-size: 12px; font-weight: 600; color: var(--accent); background: var(--accent-soft);
+    height: 26px; border-radius: 8px; display: grid; place-items: center; z-index: 1;
+  }
+  .tl-body { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+  .tl-name { font-weight: 600; font-size: 14px; }
+  .tl-desc { font-size: 13px; color: var(--text-soft); margin-top: 4px; }
+
+  /* ============ 节奏 ============ */
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+  .stat { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat .n { font-size: 24px; font-weight: 700; color: var(--accent); }
+  .stat .l { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+  .bar-row { display: grid; grid-template-columns: 64px 1fr 44px; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; }
+  .bar-track { height: 10px; background: var(--card-2); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+  .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width: 0; transition: width .8s cubic-bezier(.2,.8,.2,1); }
+  .bar-val { text-align: right; color: var(--text-soft); font-variant-numeric: tabular-nums; }
+  .chart-box { margin-top: 18px; background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .chart-title { font-size: 13px; color: var(--text-faint); margin-bottom: 8px; }
+  svg.rhythm { width: 100%; height: 180px; display: block; }
+
+  /* ============ 表格 ============ */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 720px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: var(--card-2); font-size: 12.5px; color: var(--text-faint); font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+  tr:last-child td { border-bottom: none; }
+  td .tcode { font-variant-numeric: tabular-nums; color: var(--accent); font-weight: 600; white-space: nowrap; }
+  tr:hover td { background: var(--card-2); }
+
+  /* ============ 提示词 ============ */
+  .prompt-block { position: relative; background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin: 10px 0; }
+  .prompt-block .pb-label { font-size: 12px; color: var(--text-faint); margin-bottom: 6px; font-weight: 600; }
+  .prompt-text { font-size: 13.5px; white-space: pre-wrap; word-break: break-word; color: var(--text); }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    border: 1px solid var(--border); background: var(--card); color: var(--text-soft);
+    font-size: 12px; padding: 4px 10px; border-radius: 8px; cursor: pointer; transition: all .15s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .copy-btn.ok { color: var(--accent); border-color: var(--accent); }
+  details.shot { border: 1px solid var(--border); border-radius: 12px; margin: 10px 0; background: var(--card-2); overflow: hidden; }
+  details.shot summary { cursor: pointer; padding: 12px 16px; font-size: 14px; font-weight: 600; list-style: none; display: flex; align-items: center; gap: 10px; }
+  details.shot summary::before { content: "+"; color: var(--accent); font-size: 18px; width: 16px; }
+  details.shot[open] summary::before { content: "−"; }
+  details.shot .shot-body { padding: 0 16px 14px; }
+
+  /* ============ Token ============ */
+  .token-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  .token-card { background: var(--card-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .token-card .n { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .token-card .l { font-size: 12px; color: var(--text-faint); }
+  .mode-pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+  .mode-pill.online { background: var(--accent-soft); color: var(--accent); }
+  .mode-pill.offline { background: var(--warn-soft); color: var(--warn); }
+
+  /* ============ 页脚 ============ */
+  footer { margin-top: 40px; text-align: center; color: var(--text-faint); font-size: 13px; }
+  footer .compliance {
+    background: var(--card); border: 1px dashed var(--border); border-radius: 12px;
+    padding: 14px 18px; color: var(--text-soft); text-align: left; margin-bottom: 20px;
+  }
+
+  /* ============ 响应式 ============ */
+  @media (max-width: 760px) {
+    .info-grid { grid-template-columns: 1fr; }
+    .cover { max-width: 240px; margin: 0 auto; }
+    .meta-list, .stat-row, .token-grid { grid-template-columns: repeat(2, 1fr); }
+    .card { padding: 18px; }
+    .kv { grid-template-columns: 80px 1fr; }
+  }
+  @media print {
+    body { background: #fff; }
+    .theme-btn, nav.toc, .copy-btn { display: none; }
+    .card { box-shadow: none; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ 顶部 ============ -->
+  <header class="hero">
+    <div class="hero-top">
+      <span class="badge dot" id="platformBadge">短视频拆解</span>
+      <button class="theme-btn" id="themeBtn" title="切换深色/浅色模式" aria-label="切换主题">🌙</button>
+    </div>
+    <h1>短视频爆款拆解报告</h1>
+    <p class="sub" id="heroSub">上传视频 → 自动拆解爆款要素 → 生成复刻脚本与 AI 提示词</p>
+    <nav class="toc">
+      <a href="#sec-info">基本信息</a>
+      <a href="#sec-hook">爆款拆解</a>
+      <a href="#sec-pacing">镜头节奏</a>
+      <a href="#sec-sound">字幕声音</a>
+      <a href="#sec-script">复刻脚本</a>
+      <a href="#sec-prompt">AI 提示词</a>
+      <a href="#sec-token">Token 效率</a>
+    </nav>
+  </header>
+
+  <!-- ============ 1. 基本信息 ============ -->
+  <section id="sec-info">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">1</span><h2>视频基本信息</h2></div>
+      <div class="info-grid">
+        <div>
+          <img class="cover" id="coverImg" alt="视频封面" />
+        </div>
+        <div>
+          <p class="topic" id="topicText"></p>
+          <p class="muted small" id="summaryText"></p>
+          <div class="meta-list" id="metaList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 2. 爆款拆解 ============ -->
+  <section id="sec-hook">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">2</span><h2>爆款拆解</h2></div>
+
+      <h3>开头钩子</h3>
+      <div class="tags" id="hookTags"></div>
+      <div class="kv"><span class="k">前 3 秒</span><span id="hookOpening"></span></div>
+      <div class="kv"><span class="k">手法拆解</span><span id="hookDesc"></span></div>
+      <div class="kv"><span class="k">留存原因</span><span id="hookWhy"></span></div>
+
+      <h3>叙事结构</h3>
+      <div class="tags"><span class="tag teal" id="narrativeStructure"></span></div>
+      <p class="muted small" id="narrativeDesc"></p>
+      <div class="timeline" id="narrativeTimeline"></div>
+    </div>
+  </section>
+
+  <!-- ============ 3. 镜头节奏 ============ -->
+  <section id="sec-pacing">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">3</span><h2>镜头节奏</h2></div>
+      <div class="stat-row">
+        <div class="stat"><div class="n" id="shotCount">0</div><div class="l">镜头数量（估）</div></div>
+        <div class="stat"><div class="n" id="avgShot">0s</div><div class="l">平均镜头时长</div></div>
+        <div class="stat"><div class="n" id="pacingPlatform">—</div><div class="l">适配平台</div></div>
+      </div>
+
+      <h3>镜头时长分布</h3>
+      <div id="distBars"></div>
+
+      <div class="tags" id="transTags" style="margin-top:16px"></div>
+      <div class="tags" id="cameraTags"></div>
+
+      <div class="chart-box">
+        <div class="chart-title">节奏强度曲线（1–10 分，随时间变化）</div>
+        <svg class="rhythm" id="rhythmChart" viewBox="0 0 1000 180" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4. 字幕与声音 ============ -->
+  <section id="sec-sound">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">4</span><h2>字幕与声音</h2></div>
+      <div class="kv"><span class="k">字幕样式</span><span id="subtitleStyle"></span></div>
+      <div class="kv"><span class="k">字幕排版</span><span id="subtitleDesc"></span></div>
+      <div class="kv"><span class="k">BGM 风格</span><span id="bgmStyle"></span></div>
+      <div class="kv"><span class="k">语速</span><span id="speechRate"></span></div>
+      <div class="tags" id="sfxTags"></div>
+    </div>
+  </section>
+
+  <!-- ============ 5. 复刻脚本 ============ -->
+  <section id="sec-script">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">5</span><h2>复刻脚本 · 逐段分镜表</h2></div>
+      <p class="muted small" id="scriptOverview"></p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th>#</th><th>时间轴</th><th>画面描述</th><th>字幕 / 文案</th><th>口播 / 旁白</th><th>声音 / 运镜</th></tr>
+          </thead>
+          <tbody id="storyboardBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. AI 提示词 ============ -->
+  <section id="sec-prompt">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">6</span><h2>AI 生成提示词（Seedance）</h2></div>
+      <div class="prompt-block">
+        <button class="copy-btn" data-copy="masterPrompt">复制</button>
+        <div class="pb-label">整体风格提示词 · Master Prompt</div>
+        <div class="prompt-text" id="masterPrompt"></div>
+      </div>
+      <div class="prompt-block">
+        <button class="copy-btn" data-copy="negativePrompt">复制</button>
+        <div class="pb-label">规避元素 · Negative Prompt</div>
+        <div class="prompt-text" id="negativePrompt"></div>
+      </div>
+      <h3>分镜头提示词</h3>
+      <div id="shotPrompts"></div>
+    </div>
+  </section>
+
+  <!-- ============ 7. Token 效率 ============ -->
+  <section id="sec-token">
+    <div class="card">
+      <div class="sec-head"><span class="sec-num">7</span><h2>Token 效率数据</h2></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <span class="muted small">分析模型：<strong id="tokenModel"></strong></span>
+        <span class="mode-pill" id="modePill"></span>
+      </div>
+      <div class="token-grid">
+        <div class="token-card"><div class="n" id="promptTokens">0</div><div class="l">输入 Token</div></div>
+        <div class="token-card"><div class="n" id="completionTokens">0</div><div class="l">输出 Token</div></div>
+        <div class="token-card"><div class="n" id="totalTokens">0</div><div class="l">合计 Token</div></div>
+        <div class="token-card"><div class="n" id="framesSent">0</div><div class="l">发送关键帧</div></div>
+      </div>
+      <p class="muted small" id="tokenTime"></p>
+
+      <h3>历史版本对比</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>版本 / 模型</th><th>模式</th><th>输入</th><th>输出</th><th>合计</th><th>备注</th></tr></thead>
+          <tbody id="compareBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="compliance" id="complianceText"></div>
+    <div>本报告由 video-breakdown-skill 自动生成 · 复刻内容请遵守平台规范</div>
+    <div style="margin-top:6px">上传视频后自动完成拆解，属于包含在豆包工作中的简单 case，无需复杂配置即可使用。</div>
+  </footer>
+</div>
+
+<script>
+/* ============ 数据注入（由 build_report.py 替换） ============ */
+const DATA = __ANALYSIS_DATA__;
+
+/* ============ 工具函数 ============ */
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+  .replace(/"/g, "&quot;");
+const fmtDuration = (s) => {
+  s = Math.round(Number(s) || 0);
+  const m = Math.floor(s / 60), sec = s % 60;
+  return `${m}:${String(sec).padStart(2, "0")}`;
+};
+const asText = (v) => (v && typeof v === "object" ? Object.values(v).filter(Boolean).join("，") : String(v || ""));
+
+/* ============ 主题 ============ */
+(function initTheme() {
+  const saved = localStorage.getItem("report-theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const theme = saved || (prefersDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+  $("themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
+})();
+$("themeBtn").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("report-theme", next);
+  $("themeBtn").textContent = next === "dark" ? "☀️" : "🌙";
+});
+
+/* ============ 1. 基本信息 ============ */
+(function renderInfo() {
+  const meta = DATA.meta || {};
+  $("platformBadge").textContent = DATA.platform || "短视频拆解";
+  $("topicText").textContent = DATA.topic || "（待分析）";
+  $("summaryText").textContent = DATA.summary || "";
+  const cover = (DATA._assets && DATA._assets.cover) || "";
+  if (cover) $("coverImg").src = cover;
+  const items = [
+    ["时长", fmtDuration(meta.duration_seconds)],
+    ["分辨率", meta.resolution],
+    ["帧率", `${meta.fps} fps`],
+    ["画幅", meta.orientation],
+    ["视频编码", meta.video_codec],
+    ["音频", meta.has_audio ? "含音频轨道" : "无音频"],
+  ];
+  $("metaList").innerHTML = items.map(([k, v]) =>
+    `<div class="meta-item"><div class="k">${esc(k)}</div><div class="v">${esc(v)}</div></div>`).join("");
+})();
+
+/* ============ 2. 爆款拆解 ============ */
+(function renderHook() {
+  const hook = DATA.hook || {};
+  const types = hook.types || [];
+  $("hookTags").innerHTML = types.map((t) => `<span class="tag">${esc(t)}</span>`).join("")
+    || `<span class="tag ghost">未明确呈现</span>`;
+  $("hookOpening").textContent = hook.opening_3s || "未明确呈现";
+  $("hookDesc").textContent = hook.description || "未明确呈现";
+  $("hookWhy").textContent = hook.why_works || "未明确呈现";
+
+  const nar = DATA.narrative || {};
+  $("narrativeStructure").textContent = nar.structure || "未明确呈现";
+  $("narrativeDesc").textContent = nar.description || "";
+  const segs = nar.segments || [];
+  $("narrativeTimeline").innerHTML = segs.map((s) => `
+    <div class="tl-item">
+      <div class="tl-time">${esc(fmtDuration(s.start))}</div>
+      <div class="tl-body">
+        <div class="tl-name">${esc(s.name || "")} <span class="muted small">（${esc(fmtDuration(s.start))}–${esc(fmtDuration(s.end))}）</span></div>
+        <div class="tl-desc">${esc(s.purpose || "")} ${esc(s.description || "")}</div>
+      </div>
+    </div>`).join("");
+})();
+
+/* ============ 3. 镜头节奏 ============ */
+(function renderPacing() {
+  const p = DATA.pacing || {};
+  $("shotCount").textContent = p.shot_count || 0;
+  $("avgShot").textContent = p.avg_shot_duration ? `${p.avg_shot_duration}s` : "0s";
+  $("pacingPlatform").textContent = DATA.platform || "—";
+
+  const dist = p.duration_distribution || {};
+  const entries = Object.entries(dist);
+  const max = Math.max(1, ...entries.map(([, v]) => v));
+  $("distBars").innerHTML = entries.map(([k, v]) => `
+    <div class="bar-row">
+      <span>${esc(k)}</span>
+      <div class="bar-track"><div class="bar-fill" data-w="${Math.round((v / max) * 100)}"></div></div>
+      <span class="bar-val">${esc(v)}</span>
+    </div>`).join("");
+  requestAnimationFrame(() => document.querySelectorAll(".bar-fill").forEach((el) =>
+    el.style.width = el.dataset.w + "%"));
+
+  $("transTags").innerHTML = (p.transitions || []).map((t) => `<span class="tag teal">转场 · ${esc(t)}</span>`).join("");
+  $("cameraTags").innerHTML = (p.camera_movements || []).map((t) => `<span class="tag ghost">运镜 · ${esc(t)}</span>`).join("");
+
+  drawRhythm(p.rhythm_curve || []);
+})();
+
+function drawRhythm(curve) {
+  const svg = $("rhythmChart");
+  if (!curve.length) { svg.innerHTML = `<text x="500" y="95" text-anchor="middle" fill="currentColor" opacity=".4" font-size="16">暂无节奏数据</text>`; return; }
+  const W = 1000, H = 180, pad = 14;
+  const xs = curve.map((_, i) => pad + (i * (W - 2 * pad)) / Math.max(curve.length - 1, 1));
+  const ys = curve.map((d) => H - pad - ((Number(d.intensity) || 0) / 10) * (H - 2 * pad));
+  const pts = xs.map((x, i) => `${x.toFixed(1)},${ys[i].toFixed(1)}`).join(" ");
+  const area = `${pad},${H - pad} ${pts} ${W - pad},${H - pad}`;
+  const labels = curve.map((d, i) =>
+    i % Math.ceil(curve.length / 8 || 1) === 0
+      ? `<text x="${xs[i]}" y="${H - 2}" font-size="11" fill="currentColor" opacity=".5" text-anchor="middle">${esc(d.time || "")}</text>` : "").join("");
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2dd4bf" stop-opacity=".35"/>
+        <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <polygon points="${area}" fill="url(#rg)"/>
+    <polyline points="${pts}" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${xs.map((x, i) => `<circle cx="${x}" cy="${ys[i]}" r="3" fill="#2dd4bf"/>`).join("")}
+    ${labels}`;
+}
+
+/* ============ 4. 字幕与声音 ============ */
+(function renderSound() {
+  const s = DATA.subtitle_sound || {};
+  $("subtitleStyle").textContent = asText(s.subtitle_style) || "未明确呈现";
+  $("subtitleDesc").textContent = s.subtitle_description || "未明确呈现";
+  $("bgmStyle").textContent = s.bgm_style || "未明确呈现";
+  $("speechRate").textContent = s.speech_rate || "未明确呈现";
+  $("sfxTags").innerHTML = (s.sound_effects || []).map((t) => `<span class="tag">音效 · ${esc(t)}</span>`).join("");
+})();
+
+/* ============ 5. 复刻脚本 ============ */
+(function renderScript() {
+  const rs = DATA.replication_script || {};
+  $("scriptOverview").textContent = rs.overview || "";
+  const rows = rs.storyboard || [];
+  $("storyboardBody").innerHTML = rows.map((r) => `
+    <tr>
+      <td>${esc(r.no)}</td>
+      <td><span class="tcode">${esc(r.start)}</span><br><span class="muted small">${esc(r.end)}</span></td>
+      <td>${esc(r.visual)}</td>
+      <td>${esc(r.subtitle)}</td>
+      <td>${esc(r.voiceover)}</td>
+      <td>${esc(r.sound)}<br><span class="muted small">${esc(r.camera)}</span></td>
+    </tr>`).join("");
+})();
+
+/* ============ 6. AI 提示词 ============ */
+(function renderPrompts() {
+  const seed = (DATA.ai_prompts && (DATA.ai_prompts.seedance || DATA.ai_prompts)) || {};
+  $("masterPrompt").textContent = seed.master_prompt || "未生成";
+  $("negativePrompt").textContent = seed.negative_prompt || "未生成";
+  const shots = seed.shots || [];
+  $("shotPrompts").innerHTML = shots.map((s) => `
+    <details class="shot">
+      <summary>镜头 ${esc(s.no)} <span class="muted small">${esc(s.start)}–${esc(s.end)}</span></summary>
+      <div class="shot-body">
+        <div class="prompt-block">
+          <button class="copy-btn" data-copy-text="${esc(s.prompt || "")}">复制</button>
+          <div class="prompt-text">${esc(s.prompt || "")}</div>
+        </div>
+      </div>
+    </details>`).join("");
+})();
+
+/* ============ 复制按钮 ============ */
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".copy-btn");
+  if (!btn) return;
+  let text = "";
+  if (btn.dataset.copy === "masterPrompt") text = $("masterPrompt").textContent;
+  else if (btn.dataset.copy === "negativePrompt") text = $("negativePrompt").textContent;
+  else text = btn.dataset.copyText || "";
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (err) {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand("copy"); ta.remove();
+  }
+  const old = btn.textContent;
+  btn.textContent = "已复制"; btn.classList.add("ok");
+  setTimeout(() => { btn.textContent = old; btn.classList.remove("ok"); }, 1400);
+});
+
+/* ============ 7. Token 效率 ============ */
+(function renderToken() {
+  const t = DATA.token_usage || {};
+  $("tokenModel").textContent = t.model || "—";
+  const pill = $("modePill");
+  const offline = t.mode === "offline-template";
+  pill.textContent = offline ? "离线模板" : "在线分析";
+  pill.className = "mode-pill " + (offline ? "offline" : "online");
+  $("promptTokens").textContent = t.prompt_tokens || 0;
+  $("completionTokens").textContent = t.completion_tokens || 0;
+  $("totalTokens").textContent = t.total_tokens || 0;
+  $("framesSent").textContent = t.frames_sent || 0;
+  $("tokenTime").textContent = t.timestamp ? `生成时间：${t.timestamp}${t.note ? "　" + t.note : ""}` : "";
+
+  // 旧版对比区域：当前版本 + 预留行
+  const rows = [
+    { v: t.model || "—", m: pill.textContent, i: t.prompt_tokens || 0, c: t.completion_tokens || 0,
+      tot: t.total_tokens || 0, note: t.note || "本次拆解" },
+    { v: "（待补充旧版本）", m: "—", i: "—", c: "—", tot: "—", note: "可在此填入历史版本数据做对比" },
+  ];
+  $("compareBody").innerHTML = rows.map((r) => `
+    <tr><td>${esc(r.v)}</td><td>${esc(r.m)}</td><td>${esc(r.i)}</td><td>${esc(r.c)}</td><td>${esc(r.tot)}</td><td>${esc(r.note)}</td></tr>`).join("");
+})();
+
+/* ============ 合规 ============ */
+(function renderCompliance() {
+  $("complianceText").textContent =
+    (DATA.compliance_notes ? DATA.compliance_notes + "\n" : "")
+    + "复刻内容需遵守平台规范：避免使用极限词、导流词，避免拉踩其他产品或竞品。";
+})();
+</script>
+</body>
+</html>

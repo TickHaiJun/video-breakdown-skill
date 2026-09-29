@@ -103,9 +103,7 @@ workspace/.user_skills/video-breakdown-skill/
 
 Agent 会按照 [SKILL.md](SKILL.md) 完成预处理、音频转录、结构化分析和报告生成。执行环境需具备下文列出的 Python、FFmpeg 与模型访问配置；若环境已提供这些配置，即可直接运行。
 
-### 先查看示例
 
-暂时没有视频或 API Key，也可以下载并打开 [示例报告](examples/sample_report/report.html)，了解最终交付形式。这一步不需要调用模型。
 
 
 
